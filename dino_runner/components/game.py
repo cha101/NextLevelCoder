@@ -79,15 +79,19 @@ class Game:
         self.x_pos_bg -= self.game_speed
     
     def draw_score(self):
-        font = pygame.font.Font(FONT_STYLE, 30)
-        text = font.render(f"Points: {self.points}", True, (0, 0, 0))
-        text_rect = text.get_rect()
-        text_rect.center = (1000, 50)
-        self.screen.blit(text, text_rect)
+        self.message(f"Points: {self.points}", 30, 1000, 50)
 
     def reset(self):
         self.game_speed = 20
-        self.death_count += 1
+        self.points = 0
+        #self.death_count += 1
+    
+    def message(self, message, characters_size, rect_x, rect_y):
+        font = pygame.font.Font(FONT_STYLE, characters_size)
+        text = font.render(message, True, (0, 0, 0))
+        text_rect = text.get_rect()
+        text_rect.center = (rect_x, rect_y)
+        self.screen.blit(text, text_rect)
 
     def handle_key_events_on_menu(self):
         for event in pygame.event.get():
@@ -98,9 +102,12 @@ class Game:
             if event.type == pygame.K_DOWN:
                 self.playing = False
                 self.running = False 
+                pygame.display.quit()
+                pygame.quit()
+
             if event.type == pygame.KEYDOWN:
                 self.reset()
-                self.run()
+                self.run()                
 
     def show_menu(self):
         self.screen.fill((250, 250, 250))
@@ -108,17 +115,14 @@ class Game:
         half_screen_widht = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            font = pygame.font.Font(FONT_STYLE, 30)
-            text = font.render("Press any key to start", True, (0, 0, 0))
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_widht, half_screen_height)
-            self.screen.blit(text, text_rect)
+            self.message("Press any key to start", 30, half_screen_widht, half_screen_height)
         elif self.death_count > 0:
-            font = pygame.font.Font(FONT_STYLE, 30)
-            text = font.render("Press DOWN to close \n" f"Score: {self.points}\n" f"Deaths: {self.death_count}", True, (0, 0, 0)) 
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_widht, half_screen_height)
-            self.screen.blit(text, text_rect)
+            #self.message("Press DOWN to close \n" f"Score: {self.points}\n" f"Deaths: {self.death_count}", 30, half_screen_widht, half_screen_height) 
+            self.message("YOU CRASHED", 50, half_screen_widht, half_screen_height)
+            self.message(f"Score: {self.points}", 30, half_screen_widht, half_screen_height + 50)
+            self.message(f"Deaths: {self.death_count}", 20, half_screen_widht, half_screen_height + 80)
+            self.message("If you want to EXIT press DOWN", 22, half_screen_widht, half_screen_height + 125)
+            self.message("otherwise any other key", 32, half_screen_widht, half_screen_height + 160)
 
         self.screen.blit(RUNNING[0], (half_screen_widht - 20, half_screen_height - 140))
 
