@@ -1,3 +1,4 @@
+import sys
 import pygame
 
 from dino_runner.components.dinosaur import Dinosaur
@@ -52,7 +53,7 @@ class Game:
 
     def update(self):
         self.update_score()
-        self.player.check_invincibility(self.scree)
+        self.player.check_invincibility(self.screen)
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
@@ -99,28 +100,18 @@ class Game:
         self.screen.blit(text, text_rect)
 
     def handle_key_events_on_menu(self):
-        events = pygame.event.get()
-       # for event in events:
-        #    if event.type == pygame.KEYDOWN:
-         #       if event.key == pygame.K_DOWN:
-          #          pygame.display.quit()
-           #          pygame.quit()
-
-            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
 
-            if event.type == pygame.K_DOWN:
-                self.playing = False
-                self.running = False 
-                pygame.display.quit()
-                pygame.quit()
-
             if event.type == pygame.KEYDOWN:
-                self.reset()
-                self.run()                
+                if pygame.key.get_pressed()[pygame.K_DOWN]:
+                    pygame.quit()
+                    sys.exit
+                else:
+                    self.reset()
+                    self.run()             
 
     def show_menu(self):
         self.screen.fill((250, 250, 250))
