@@ -52,7 +52,7 @@ class Game:
 
     def update(self):
         self.update_score()
-        self.player.check_invincibility(self.screen)
+        self.player.check_invincibility(self.scree)
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
@@ -99,6 +99,14 @@ class Game:
         self.screen.blit(text, text_rect)
 
     def handle_key_events_on_menu(self):
+        events = pygame.event.get()
+       # for event in events:
+        #    if event.type == pygame.KEYDOWN:
+         #       if event.key == pygame.K_DOWN:
+          #          pygame.display.quit()
+           #          pygame.quit()
+
+            
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False

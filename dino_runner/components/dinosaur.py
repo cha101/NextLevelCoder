@@ -1,15 +1,15 @@
 from multiprocessing.pool import RUN
 import pygame
 
-from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING_SHIELD, JUMPING_SHIELD, RUNNING, JUMPING, DUCKING, RUNNING_SHIELD, SHIELD_TYPE
+from dino_runner.utils.constants import DEFAULT_TYPE, DUCKING_HAMMER, DUCKING_SHIELD, HAMMER_TYPE, JUMPING_HAMMER, JUMPING_SHIELD, RUNNING, JUMPING, DUCKING, RUNNING_HAMMER, RUNNING_SHIELD, SHIELD_TYPE
 from pygame.sprite import Sprite
 
 from dino_runner.utils.text_utils import draw_message_component
 
 
-RUN_IMG = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD}
-JUMP_IMG = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD}
-DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD}
+RUN_IMG = {DEFAULT_TYPE: RUNNING, SHIELD_TYPE: RUNNING_SHIELD, HAMMER_TYPE: RUNNING_HAMMER}
+JUMP_IMG = {DEFAULT_TYPE: JUMPING, SHIELD_TYPE: JUMPING_SHIELD, HAMMER_TYPE: JUMPING_HAMMER}
+DUCK_IMG = {DEFAULT_TYPE: DUCKING, SHIELD_TYPE: DUCKING_SHIELD, HAMMER_TYPE: DUCKING_HAMMER}
 
 class Dinosaur(Sprite):
     X_POS = 80
@@ -33,10 +33,11 @@ class Dinosaur(Sprite):
     def setup_state(self):
         self.has_power_up = False
         self.shield = False
+        self.hammer = False
         self.show_text = False
         self.shield_time_up = 0
-
-        
+        self.hammer_time_up = 0
+       
     def update(self, user_input):
         if self.dino_run:
             self.run()
@@ -98,6 +99,20 @@ class Dinosaur(Sprite):
                     pos_y_center= 40)   
             else:
                 self.shield = False
+                self.type = DEFAULT_TYPE   
+
+    def check(self, screen):
+        if self.hammer:
+            time_to_show = round((self.hammer_time_up - pygame.time.get_ticks()) / 1000, 2)
+            if time_to_show >= 0 and self.show_text:
+                draw_message_component(
+                    f"Shield enabled for {time_to_show}",
+                    screen,
+                    font_size= 18,
+                    pos_x_center= 500,
+                    pos_y_center= 40)   
+            else:
+                self.hammer = False
                 self.type = DEFAULT_TYPE           
 
     def draw(self, screen: pygame.Surface):
