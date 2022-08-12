@@ -2,6 +2,7 @@ import pygame
 
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
 from dino_runner.utils.constants import BG, ICON, RUNNING, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
 
@@ -15,9 +16,10 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.playing = False
-        self.running = True
+        self.running = False
         self.player = Dinosaur()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
         self.game_speed = 20
         self.x_pos_bg = 0
         self.y_pos_bg = 380
@@ -33,9 +35,9 @@ class Game:
         pygame.display.quit()
         pygame.quit()
 
-    def run(self):
+    def run(self):# Game loop: events - update - draw
         self.obstacle_manager.reset_obstacles()
-        # Game loop: events - update - draw
+        self.power_up_manager.reset_power_ups()
         self.playing = True
         while self.playing:
             self.events()
@@ -49,10 +51,12 @@ class Game:
                 self.running = False
 
     def update(self):
+        self.update_score()
+        self.player.check_invincibility(self.screen)
         user_input = pygame.key.get_pressed()
         self.player.update(user_input)
         self.obstacle_manager.update(self)
-        self.update_score()
+        self.power_up_manager.update(self.points, self.game_speed, self.player)
     
     def update_score(self):
         self.points += 1
@@ -63,9 +67,10 @@ class Game:
         self.clock.tick(FPS)
         self.screen.fill((255, 255, 255))
         self.draw_background()
+        self.draw_score()
         self.player.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
-        self.draw_score()
+        self.power_up_manager.draw(self.screen)
         pygame.display.update()
         pygame.display.flip()
 
@@ -79,14 +84,14 @@ class Game:
         self.x_pos_bg -= self.game_speed
     
     def draw_score(self):
-        self.message(f"Points: {self.points}", 30, 1000, 50)
+        self.draw_message(f"Points: {self.points}", 30, 1000, 50)
 
     def reset(self):
         self.game_speed = 20
         self.points = 0
         #self.death_count += 1
     
-    def message(self, message, characters_size, rect_x, rect_y):
+    def draw_message(self, message, characters_size, rect_x, rect_y):
         font = pygame.font.Font(FONT_STYLE, characters_size)
         text = font.render(message, True, (0, 0, 0))
         text_rect = text.get_rect()
@@ -115,14 +120,14 @@ class Game:
         half_screen_widht = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            self.message("Press any key to start", 30, half_screen_widht, half_screen_height)
+            self.draw_message("Press any key to start", 30, half_screen_widht, half_screen_height)
         elif self.death_count > 0:
             #self.message("Press DOWN to close \n" f"Score: {self.points}\n" f"Deaths: {self.death_count}", 30, half_screen_widht, half_screen_height) 
-            self.message("YOU CRASHED", 50, half_screen_widht, half_screen_height)
-            self.message(f"Score: {self.points}", 30, half_screen_widht, half_screen_height + 50)
-            self.message(f"Deaths: {self.death_count}", 20, half_screen_widht, half_screen_height + 80)
-            self.message("If you want to EXIT press DOWN", 22, half_screen_widht, half_screen_height + 125)
-            self.message("otherwise any other key", 32, half_screen_widht, half_screen_height + 160)
+            self.draw_message("YOU CRASHED", 50, half_screen_widht, half_screen_height)
+            self.draw_message(f"Score: {self.points}", 30, half_screen_widht, half_screen_height + 50)
+            self.draw_message(f"Deaths: {self.death_count}", 20, half_screen_widht, half_screen_height + 80)
+            self.draw_message("If you want to EXIT press DOWN", 22, half_screen_widht, half_screen_height + 125)
+            self.draw_message("otherwise any other key", 32, half_screen_widht, half_screen_height + 160)
 
         self.screen.blit(RUNNING[0], (half_screen_widht - 20, half_screen_height - 140))
 
