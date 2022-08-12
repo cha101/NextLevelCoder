@@ -66,7 +66,7 @@ class Game:
 
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))
+        self.screen.fill((200, 200, 200))
         self.draw_background()
         self.draw_score()
         self.player.draw(self.screen)
@@ -94,7 +94,7 @@ class Game:
     
     def draw_message(self, message, characters_size, rect_x, rect_y):
         font = pygame.font.Font(FONT_STYLE, characters_size)
-        text = font.render(message, True, (0, 0, 0))
+        text = font.render(message, True, (60, 60, 60))
         text_rect = text.get_rect()
         text_rect.center = (rect_x, rect_y)
         self.screen.blit(text, text_rect)

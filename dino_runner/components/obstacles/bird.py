@@ -6,7 +6,7 @@ class Bird(Obstacle):
     def __init__(self, image):
         self.type = 0 #random.randint(0, 1)
         super().__init__(image, self.type)
-        self.rect.y = 130
+        self.rect.y = 250
 
         def draw (self, screen):
             if self.index >=9:
